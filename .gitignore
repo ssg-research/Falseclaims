@@ -6,3 +6,4 @@ defences/
 train_img.log
 __pycache__/
 */__pycache__/
+*.log
