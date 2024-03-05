@@ -14,7 +14,7 @@ from utils import test
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default='configs/imagenet/train/resnet.yaml',
+    parser.add_argument('-c', '--config', type=str, default='configs/cifar10/train/resnet.yaml',
                         help="Path to config file. Determines all training params.")
     parser.add_argument('--resume', type=str, default=None)
 

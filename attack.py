@@ -12,16 +12,25 @@ from train import train
 from utils import test
 import time
 
+def t_or_f(arg):
+    ua = str(arg).upper()
+    if 'TRUE'.startswith(ua):
+       return True
+    elif 'FALSE'.startswith(ua):
+       return False
+    else:
+       pass
+   
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, default='configs/cifar10/train/resnet.yaml',
                         help="Path to config file. Determines all training params.")
-    parser.add_argument('--ind_resume', type=bool, default=True, help="Set as False to train independ model")
-    parser.add_argument('--inds_resume', type=bool, default=True, help="Set as False to train independ models")
-    parser.add_argument('--vic_resume', type=bool, default=True, help="Set as False to train victim model")
+    parser.add_argument('--ind_resume', type=t_or_f, default=True, help="Set as False to train independ model")
+    parser.add_argument('--inds_resume', type=t_or_f, default=True, help="Set as False to train independ models")
+    parser.add_argument('--vic_resume', type=t_or_f, default=True, help="Set as False to train victim model")
     parser.add_argument('--model_count', type=int, default=1, help='Dir id of the accuser models')
-    parser.add_argument('--adv', type=bool, default=True, help='Set the first part as accuser and secend part as independ')
-    parser.add_argument('--adv_target', type=bool, default=False, help="targeted or untargeted")
+    parser.add_argument('--adv', type=t_or_f, default=True, help='True for different data, False for same data')
+    parser.add_argument('--adv_target', type=t_or_f, default=False, help="targeted or untargeted")
 
     return parser.parse_args()
 
@@ -60,11 +69,11 @@ def main():
         ind_models.append(ind_model_temp)
     print("Victim/Ind Models Initialized.")
 
-    if not os.path.exists(config.logdir+"victim"):
-        os.makedirs(config.logdir+"victim/")
-        # os.makedirs(config.modeldir+"victim/")
-        os.makedirs(config.logdir+"ind/")
-        # os.makedirs(config.modeldir+"ind/")
+    if not os.path.exists(config.logdir+"victim") or not os.path.exists(config.modeldir+"victim"):
+        os.makedirs(config.logdir+"victim/", exist_ok=True)
+        os.makedirs(config.modeldir+"victim/", exist_ok=True)
+        os.makedirs(config.logdir+"ind/", exist_ok=True)
+        os.makedirs(config.modeldir+"ind/", exist_ok=True)
 
 
     if not args.vic_resume:
