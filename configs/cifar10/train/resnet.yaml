@@ -32,7 +32,7 @@ scheduler:
 watermark_len : 1000
 wm_batch_size : 1000
 used_wm_len : 50
-num_ref_model : 15
+num_ref_model : 10
 num_ind_model : 2
 logdir : log/cifar10/
 modeldir : checkpoint/cifar10/

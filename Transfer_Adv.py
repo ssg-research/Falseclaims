@@ -13,10 +13,10 @@ class Transfer2():
         super().__init__()
         self.model = model
         model.eval()
-        self.ref_models = ref_models[:10]
+        self.ref_models = ref_models[:config.num_ref_model-3]
         for ref_model in self.ref_models:
             ref_model.eval()
-        self.ind_models = ref_models[10:]
+        self.ind_models = ref_models[config.num_ref_model-3:]
         for ind_model in self.ind_models:
             ind_model.eval()
             

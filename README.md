@@ -72,6 +72,12 @@ python attack.py --c configs/imagenet/train/resnet_same_struct.yaml
 python attack.py --c configs/cifar10/train/resnet_same_struct.yaml --adv_target True
 ```
 
+#### To train the independent models and victim models
+```
+python attack.py --c ['configs'] --ind_resume False --inds_resume False --vic_resume False
+```
+This command will generate the independent models and vicim mdoels then generate our false claims.
+
 
 To compute the decision thresholds, 
 for [Li (b)](https://github.com/zhenglisec/Blind-Watermark-for-DNN), [DAWN](https://github.com/ssg-research/dawn-dynamic-adversarial-watermarking-of-neural-networks), [Lukas](https://github.com/ayberkuckun/DNN-Fingerprinting) and  [DI](https://github.com/cleverhans-lab/dataset-inference), we recommend their official implements; and [Watermark-Robustness-ToolBox](https://github.com/dnn-security/Watermark-Robustness-Toolbox) for [Adi](https://arxiv.org/abs/1802.04633) and [EWE](https://arxiv.org/abs/2002.12200).
