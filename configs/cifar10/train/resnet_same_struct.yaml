@@ -1,0 +1,44 @@
+train:
+  name: Train
+  num_epoches: 60
+  batch_size: 128
+
+model:
+  name: cifar_wide_resnet
+  num_classes: 10
+
+ind_model:
+  name: cifar_wide_resnet
+  num_classes: 10
+
+dataset:
+    name: CIFAR10
+    root: data/datasets/CIFAR10
+
+
+optimizer:
+  name: SGD
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 0.0001
+  nesterov: True
+
+scheduler:
+  name: MultiStepLR
+  milestones: [20, 35, 50]
+  gamma: 0.2
+
+
+watermark_len : 1000
+wm_batch_size : 1000
+used_wm_len : 50
+num_ref_model : 15
+num_ind_model : 2
+logdir : log/cifar10/
+modeldir : checkpoint/cifar10/
+randomseed : 0
+imgdir : half_splitA1_res34_eps16
+eps : 16
+alpha : 0.03
+un_loss_threshold : 150
+ta_loss_threshold : 1.0e-6

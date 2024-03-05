@@ -1,0 +1,53 @@
+train:
+  name: Train
+  num_epoches: 5
+  batch_size: 128
+
+model:
+  name: resnet18
+  num_attributes: 1
+
+ind_model:
+  name: resnet18
+  num_attributes: 1
+
+dataset:
+  name: CelebA
+  root: data/datasets/CELEBA/
+  ann_file: list_attr_celeba.txt
+
+optimizer:
+  name: SGD
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 0.0001
+  nesterov: True
+
+sur_optimizer:
+  name: SGD
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 0.0001
+  nesterov: True
+
+scheduler:
+  name: MultiStepLR
+  milestones: [20, 35, 50]
+  gamma: 0.2
+
+
+watermark_len : 1000
+wm_batch_size : 1000
+used_wm_len : 100
+num_ref_model : 5
+num_ind_model : 1
+num_sur_model: 5
+logdir : log/celebA/
+modeldir : checkpoint/celebA/
+randomseed : 0
+imgdir : celebA_eps16_lukas
+randomseed : 0
+eps : 16
+alpha : 0.03
+un_loss_threshold : 60
+ta_loss_threshold : 1.0e-6
