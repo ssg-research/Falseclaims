@@ -32,7 +32,7 @@ watermark_len : 500
 wm_batch_size : 500
 used_wm_len : 100
 num_ref_model : 8
-num_ind_model : 2
+num_ind_model : 4
 logdir : log/imagenet/
 modeldir : checkpoint/imagenet/
 imgdir : half1_resnet18_eps16
