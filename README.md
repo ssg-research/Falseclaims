@@ -46,7 +46,7 @@ For ImageNet
 python attack.py --c configs/imagenet/train/resnet.yaml
 ```
 
-#### To generat false claims with the same structure and different data
+#### To generat false claims with different structures and the same data
 
 For CIFAR-10
 ```
