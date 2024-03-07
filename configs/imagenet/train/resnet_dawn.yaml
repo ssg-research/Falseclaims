@@ -4,7 +4,7 @@ train:
   batch_size: 32
 
 model:
-  name: resnet18_imgenet
+  name: resnet18_imagenet
   num_classes: 10
 
 ind_model:

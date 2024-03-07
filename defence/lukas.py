@@ -4,11 +4,14 @@ import torch
 import numpy as np
 from tqdm import tqdm
 import torch.nn.functional as F
-
+import sys 
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
 # import os
 from utils import *
 from models import *
-from Transfer_Adv import Transfer, Transfer2, Transfer_Untargeted
 from train import train
 from utils import test
 
@@ -55,42 +58,6 @@ def main():
     print("Victim models loaded.")
     victim_model = victim_model.cuda()
     victim_model.eval()
-
-    # if not args.inds_resume:
-    #     print("Train Ind Models... ")
-    #     ind_models = []
-    #     ind_model = config.ind_model()
-    #     for i in range(config.num_ind_model):
-    #         ind_model_temp = config.ind_model()
-    #         ind_models.append(ind_model_temp)
-    #     for i in range(config.num_ind_model):
-    #         ind_model_temp = config.ind_model()
-    #         ind_models.append(ind_model_temp)
-    #     if not os.path.isdir(config.logdir+"ind/{}{}_{}/".format(adv, args.model_count,config.ind_model.name,config.ind_model.name)):
-    #         os.makedirs(config.logdir+"ind/{}{}_{}/".format(adv, args.model_count,config.ind_model.name,config.ind_model.name))
-    #     if not os.path.isdir(config.modeldir+"ind/{}{}_{}/".format(adv, args.model_count,config.ind_model.name,config.ind_model.name)):
-    #         os.makedirs(config.modeldir+"ind/{}{}_{}/".format(adv, args.model_count,config.ind_model.name,config.ind_model.name))
-    #     for i in range(config.num_ind_model):
-    #         if args.adv == True:
-    #             trainloader, _, _ = load_data(config, adv=not args.adv)
-    #         else:
-    #             trainloader, _, _ = load_data(config, adv=args.adv)
-    #         train(config, ind_models[i], trainloader, config.logdir+"ind/{}{}_{}/{}{}_{}_ind{}.log".format(adv,args.model_count,config.ind_model.name,adv,args.model_count,config.ind_model.name,i))
-    #         test(ind_models[i], testloader, config.logdir+"ind/{}{}_{}/{}{}_{}_ind{}.log".format(adv,args.model_count,config.ind_model.name,adv,args.model_count,config.ind_model.name,i))
-    #         torch.save(ind_models[i].state_dict(), config.modeldir+"ind/{}{}_{}/{}{}_{}_ind_model{}.pth".format(adv,args.model_count,config.ind_model.name,adv,args.model_count,config.ind_model.name,i))
-    #         ind_models[i].eval()
-
-    # else:
-    #     print("Load Ind Models... ")
-    #     ind_models = []
-    #     for i in range(config.num_ind_model):
-    #         ind_model_temp = config.ind_model()
-    #         ind_models.append(ind_model_temp)
-    #     for i in range(config.num_ind_model):
-    #         ind_models[i].load_state_dict(torch.load(config.modeldir+"ind/{}{}_{}/{}{}_{}_ind_model{}.pth".format(adv,args.model_count,config.ind_model.name,adv,args.model_count,config.ind_model.name,i)))
-    #         ind_models[i].eval()
-    #         ind_models[i] = ind_models[i].cuda()
-    #     print("Ind models loaded.")
 
     if not args.ind_resume:
         ind_model = config.ind_model()

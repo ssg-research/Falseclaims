@@ -7,12 +7,15 @@ from tqdm import tqdm
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR, ReduceLROnPlateau
-
+import sys 
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
 # import os
 from utils import *
 from models import *
 from train import train
-from Transfer_Adv import Transfer, Transfer2, Transfer_Untargeted
 # from train import train
 # from utils import test
 from tqdm import tqdm
@@ -25,9 +28,9 @@ import time
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default='configs/celebA/train/resnet_li.yaml',
+    parser.add_argument('-c', '--config', type=str, default='configs/cifar10/train/resnet_li.yaml',
                         help="Path to config file. Determines all training params.")
-    parser.add_argument('--save_dir', type=str, default='defences/celeba/Li')    
+    parser.add_argument('--save_dir', type=str, default='defences/cifar10/Li')    
     parser.add_argument('--ind_resume', type=bool, default=False)
     parser.add_argument('--fine_tune_resume', type=bool, default=False)
     parser.add_argument('--vic_resume', type=bool, default=False)
@@ -117,8 +120,9 @@ def train(args, config, Dnnet, Hidnet, Disnet, trainloader,testloader, secret_im
             loss_mse = criterionH_mse(wm_input, wm_img)
             loss_ssim = criterionH_ssim(wm_input, wm_img)
             loss_adv = criterionD(wm_dis_output, valid)
-        
+
             loss_dnn = criterionN(wm_dnn_output, wm_label)
+
             loss_H = args.hyper_parameters[0] * loss_mse + args.hyper_parameters[1] * (1-loss_ssim) + args.hyper_parameters[2] * loss_adv + args.hyper_parameters[3] * loss_dnn
             loss_H.backward()
             optimizerH.step()
@@ -269,39 +273,9 @@ def test(args, config,epoch, Dnnet, Hidnet,Disnet, testloader, wm_inputs, wm_lab
     test_loss[0].append(val_hloss)
     test_loss[1].append(val_disloss)
 
-    # save_loss_acc(epoch, test_loss, test_acc, False)
-    # save
     real_acc = 100. * real_correct / real_total
     wm_acc = 100. * wm_correct / wm_total
     wm_input_acc = 100. * wm_cover_correct / wm_total
-    # if real_acc >= best_real_acc and save:  # and (wm_acc >= best_wm_acc):
-    #     print('Saving...')
-
-    #     Hstate = {
-    #         'net': Hidnet.module if torch.cuda.is_available() else Hidnet,
-    #         'epoch': epoch,
-    #     }
-    #     Dstate = {
-    #         'net': Disnet.module if torch.cuda.is_available() else Disnet,
-    #         'epoch': epoch,
-    #     }
-    #     Nstate = {
-    #         'net': Dnnet.module if torch.cuda.is_available() else Dnnet,
-    #         'acc': real_acc,
-    #         'wm_acc': wm_acc,
-    #         # 'wm_labels':np_labels,
-    #         'epoch': epoch,
-    #     }
-
-    #     torch.save(Hstate, 'defences/Li/' + 'checkpiont/Hidnet.pt')
-    #     torch.save(Dstate, 'defences/Li/' + 'checkpiont/Disnet.pt')
-    #     torch.save(Nstate, 'defences/Li/' + 'checkpiont/Dnnet.pt')
-    #     best_real_acc = real_acc
-    # if wm_acc > best_wm_acc:
-    #     best_wm_acc = wm_acc
-
-    # if wm_input_acc > best_wm_input_acc:
-    #     best_wm_input_acc = wm_input_acc
     return val_hloss, val_disloss, val_dnnloss, real_acc, wm_acc, wm_input_acc
 
 def train_sur(config, model, train_loader, n_epoch=None):
@@ -346,19 +320,30 @@ def main():
     else:
         adv = ''
 
-    # print("Load Ref Models...")
-    # ref_models = load_model(config, args.model_count)
-    # print("Ref Models Loaded.")
+    args.save_dir = f'defences/{config.dataset.name.lower()}/Li'
+    if not os.path.exists(args.save_dir):
+        os.makedirs(args.save_dir)
    
     print("Load Victim Data...")
     trainloader, testloader, watermarkloader = load_data(config, adv=True)
     print("Load Victim Data finished.")
 
     mean, std = (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
-    transform_list_test = transforms.Compose([
-                            transforms.Resize([224,192], interpolation=Image.BICUBIC),
-                            transforms.ToTensor(),
-                           transforms.Normalize(mean, std)])
+    if config.dataset.name == "CelebA":
+        transform_list_test = transforms.Compose([
+                                transforms.Resize([224,192], interpolation=Image.BICUBIC),
+                                transforms.ToTensor(),
+                            transforms.Normalize(mean, std)])
+    elif config.dataset.name == "CIFAR10":
+        transform_list_test = transforms.Compose([transforms.ToTensor(),
+                            transforms.Normalize(mean, std)])
+    else:
+        transform_list_test = transforms.Compose([
+                                            transforms.Resize(256),
+                                            transforms.CenterCrop(224),
+                                            transforms.ToTensor(),
+                                            transforms.Normalize(mean, std)])
+        
     ieee_logo = torchvision.datasets.ImageFolder(
         root='data/datasets/IEEE', transform=transform_list_test)
     ieee_loader = torch.utils.data.DataLoader(ieee_logo, batch_size=1)
@@ -373,16 +358,18 @@ def main():
 
         wm_inputs.append(wm_input)
         wm_cover_labels.append(wm_cover_label)
-        wm_labels.append(1-wm_cover_label)
-    # np_labels = np.random.randint(
-    #     2, size=(int(config.watermark_len/config.wm_batch_size), config.wm_batch_size))
-    # wm_labels = torch.from_numpy(np_labels).cuda()
-    Dis = {'CIFAR10':{DiscriminatorNet},'CelebA':{DiscriminatorNet_CelebA},'imagenet':{DiscriminatorNet_ImageNet}}
+        if config.dataset.name == "CelebA":
+            wm_labels.append(1-wm_cover_label)
+    if config.dataset.name != "CelebA":
+        np_labels = np.random.randint(
+            2, size=(int(config.watermark_len/config.wm_batch_size), config.wm_batch_size))
+        wm_labels = torch.from_numpy(np_labels).cuda()
+    Dis = {'CIFAR10':DiscriminatorNet,'CelebA':DiscriminatorNet_CelebA,'imagenet':DiscriminatorNet_ImageNet}
     Hidnet = UnetGenerator()
     Hidnet = Hidnet.cuda()
     Disnet = Dis[config.dataset.name]()
     Disnet = Disnet.cuda()
-    Dnnet = config.model()
+    Dnnet = mlconfig.instantiate(config.model)
     Dnnet = Dnnet.cuda()
     
     global best_real_acc
@@ -433,41 +420,6 @@ def main():
         dnn_wmacc=test_watermark(Dnnet, watermarkloader_a)
     with open(f"{args.save_dir}/result.log","a+") as file:
             file.write("dnn wmacc: {}, ".format(dnn_wmacc))
-
-    # if args.sur_resume:
-    #     print("Load Sur models")
-    #     for i in range(config.num_sur_model):
-    #         sur_model = config.ind_model()
-    #         sur_acc = test_watermark(sur_model, testloader)
-    #         sur_wmacc = test_watermark(sur_model, watermarkloader_a)
-    #         with open(f"{args.save_dir}/result.log","a+") as file:
-    #             file.write("sur before train{} acc: {}, wmacc: {}, ".format(i,sur_acc, sur_wmacc))
-    #         sur_model.load_state_dict(torch.load(f"{args.save_dir}/surrogate/sur_model{i}.pth"))
-    #         # test(args, config, 0, sur_model, Hidnet, Disnet, testloader, wm_inputs,wm_labels, wm_idx, wm_cover_labels, secret_img)
-    #         print("Test Acc:")
-    #         sur_acc = test_watermark(sur_model, testloader)
-    #         print("WM Acc:")
-    #         sur_wmacc = test_watermark(sur_model, watermarkloader_a)
-    #         with open(f"{args.save_dir}/result.log","a+") as file:
-    #             file.write("sur{} acc: {}, wmacc: {}, \n".format(i,sur_acc, sur_wmacc))
-    # else:
-    #     trainloader = extract_dataset(Dnnet, trainloader, config.train.batch_size, config)
-    #     print("Train Sur models")
-    #     for i in range(config.num_sur_model):
-    #         sur_model = config.ind_model()
-    #         sur_acc = test_watermark(sur_model, testloader)
-    #         sur_wmacc = test_watermark(sur_model, watermarkloader_a)
-    #         with open(f"{args.save_dir}/result.log","a+") as file:
-    #             file.write("sur before train{} acc: {}, wmacc: {}, ".format(i,sur_acc, sur_wmacc))
-    #         train_sur(config, sur_model, trainloader)
-    #         torch.save(sur_model.state_dict(), f"{args.save_dir}/surrogate/sur_model{i}.pth")
-    #         # test(args, config, 0, sur_model, Hidnet, Disnet, testloader, wm_inputs,wm_labels, wm_idx, wm_cover_labels, secret_img)
-    #         print("Test Acc:")
-    #         sur_acc = test_watermark(sur_model, testloader)
-    #         print("WM Acc:")
-    #         sur_wmacc = test_watermark(sur_model, watermarkloader_a)
-    #         with open(f"{args.save_dir}/result.log","a+") as file:
-    #             file.write("sur{} acc: {}, wmacc: {}, \n".format(i,sur_acc, sur_wmacc))
 
     with open(f"{args.save_dir}/result.log","a+") as file:
         file.write("\n")

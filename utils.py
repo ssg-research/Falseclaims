@@ -286,7 +286,7 @@ def load_sur_model(config, model_num):
     model_dir = config.modeldir + 'surrogate/' + config.model.name + '/'+str(model_num) + '/'
     ref_model=[]
     for i in range(config.num_sur_model):
-        model = config.model()
+        model = mlconfig.instantiate(config.model)
         model.load_state_dict(torch.load(model_dir+"model{}.pth".format(i)))
         model.eval()
         ref_model.append(model.cuda())

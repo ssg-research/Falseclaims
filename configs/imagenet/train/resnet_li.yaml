@@ -4,11 +4,11 @@ train:
   batch_size: 100
 
 model:
-  name: resnet18_imgenet
+  name: resnet18_imagenet
   num_classes: 10
 
 ind_model:
-  name: resnet18_imgenet
+  name: resnet18_imagenet
   num_classes: 10
 
 dataset:

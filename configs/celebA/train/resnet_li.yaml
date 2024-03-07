@@ -48,7 +48,6 @@ logdir : log/celebA/
 modeldir : checkpoint/celebA/
 randomseed : 0
 imgdir : celebA_eps16_lukas
-randomseed : 0
 eps : 16
 alpha : 0.03
 un_loss_threshold : 120

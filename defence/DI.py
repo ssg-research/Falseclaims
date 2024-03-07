@@ -4,6 +4,11 @@ import torch.nn as nn
 import time
 import argparse
 import mlconfig
+import sys 
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
 from Transfer_Adv import Transfer_Untargeted, Transfer2
 from utils import *
 from models import *
@@ -278,10 +283,10 @@ def feature_extractor(args, config):
             f.write("Test: {}\n".format(test_acc))
         torch.save(fint_model.state_dict(), f"{args.save_dir}/models/{args.dataset}/model_fine-tune/final.pt")
 
-    if args.model_id == 'ind1' or args.model_id == 'suspect_same_data' or args.model_id=='ind':
-        student = config.ind_model() #teacher is not needed
+    if args.model_id == 'suspect' or args.model_id == 'suspect_same_data' or args.model_id=='ind':
+        student = mlconfig.instantiate(config.ind_model)
     elif args.Amazon == False:
-        student = config.model()
+        student = mlconfig.instantiate(config.model)
     location = f"{args.model_dir}/final.pt"
     if args.Amazon == False:
         print("load model from: ", location)
@@ -335,11 +340,11 @@ def feature_extractor(args, config):
 
     func = mapping[args.feature_type]
 
-    # test_d = func(args, test_loader, student)
+    test_d = func(args, test_loader, student)
     # print(test_d)
     print("test")
-    # torch.save(test_d, f"{args.file_dir}/test_{args.feature_type}_vulnerability_2.pt")
-    # torch.save(test_d, f"{args.file_dir_adv}/test_{args.feature_type}_vulnerability_2.pt")
+    torch.save(test_d, f"{args.file_dir}/test_{args.feature_type}_vulnerability_2.pt")
+    torch.save(test_d, f"{args.file_dir_adv}/test_{args.feature_type}_vulnerability_2.pt")
     if args.adv == True:
         train_d_adv = func(args, watermarkloader_a, student)   
         print(train_d_adv)

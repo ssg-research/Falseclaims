@@ -5,7 +5,11 @@ import torch
 import numpy as np
 from tqdm import tqdm
 import torch.nn.functional as F
-
+import sys 
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+sys.path.append(str(parent_dir))
 # import os
 from utils import *
 from models import *

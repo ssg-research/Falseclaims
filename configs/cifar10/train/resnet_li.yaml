@@ -48,7 +48,6 @@ logdir : log/cifar10/
 modeldir : checkpoint/cifar10/
 randomseed : 0
 imgdir : res34_eps16
-randomseed : 0
 eps : 16
 alpha : 0.03
 un_loss_threshold : 120

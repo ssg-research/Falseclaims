@@ -110,10 +110,10 @@ class Transfer2():
                 if arrive==0:
                     if loss_ind < self.config.ta_loss_threshold:
                         arrive=i
-                        if arrive>=10:
+                        if arrive>=5:
                             break
             
-            if loss_ind > self.config.ta_loss_threshold or arrive>=10:
+            if loss_ind > self.config.ta_loss_threshold or arrive>=5:
                 continue
             # plt.imsave("exp_log/{}/ta_imgs/ta_{}_label{}-{}.jpg".format(self.config.imgdir,used_img_id,labels[b].item(),target.item()),np.concatenate([((image-torch.min(image))/(torch.max(image)-torch.min(image))).cpu().numpy().squeeze().transpose([1,2,0]),((x-torch.min(x))/(torch.max(x)-torch.min(x))).detach().cpu().numpy().squeeze().transpose([1,2,0])]))
             if self.config.dataset.name=='CelebA' and self.config.train.name != 'DI':
