@@ -17,7 +17,7 @@ The models for CIFAR10 and ImageNet can be downloaded from [this link](https://d
 
 
 ### Claim Generation and Verification
-#### To train your own models
+#### To train your own models which are to generate the adversarial examples
 
 ```
 python train.py -c ['dir to the configure file']
