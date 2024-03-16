@@ -9,4 +9,4 @@ six
 scikit-learn
 Pillow
 gputil
-mlconfig
+mlconfig==0.2.0

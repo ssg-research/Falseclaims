@@ -41,8 +41,8 @@ scheduler:
 watermark_len : 1000
 wm_batch_size : 1000
 used_wm_len : 100
-num_ref_model : 0
-num_ind_model : 5
+num_ref_model : 10
+num_ind_model : 4
 num_sur_model: 3
 num_fint_model: 5
 logdir : log/cifar10/

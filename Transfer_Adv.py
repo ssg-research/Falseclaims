@@ -83,7 +83,7 @@ class Transfer2():
             loop = tqdm(range(self.max_iter),desc="Adv generating.", ncols=150)
             max_noise = torch.ones_like(image) * (self.config.eps/255)*(torch.max(image)-torch.min(image))
             arrive = 0
-            if self.config.dataset.name != 'CIFAR10':
+            if self.config.dataset.name != 'CIFAR10' or self.config.train.name == 'DI':
                 arrive=1
             for i in loop:
                 x = torch.clamp(image+noise, image-max_noise, image+max_noise)

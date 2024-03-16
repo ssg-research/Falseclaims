@@ -244,7 +244,7 @@ def feature_extractor(args, config):
     train_loader, test_loader, watermarkloader = load_data(config, adv=None)
     if args.independent==True:
         # test_loader, train_loader, watermarkloader = load_data(config, adv=True)
-        student = config.ind_model()
+        student = mlconfig.instantiate(config.ind_model)
         train_sur(config,student,test_loader,50, f"{args.save_dir}/models/{args.dataset}/model_ind/log.txt")
         test_acc = test(student, train_loader)
         with open(f"{args.save_dir}/models/{args.dataset}/model_ind/log.txt","a+") as f:
@@ -264,17 +264,17 @@ def feature_extractor(args, config):
             label[idx]= int(response['FaceDetails'][0]['Gender']['Value']=='Male')
         return label
     if args.extract:
-        teacher = config.model()
+        teacher = mlconfig.instantiate(config.model)
         teacher.load_state_dict(torch.load(f"{args.save_dir}/models/{args.dataset}/model_teacher/final.pt")) 
         extract_loader = extract_dataset(teacher, train_loader,100)
-        ext_model = config.model()
+        ext_model = mlconfig.instantiate(config.model)
         train_sur(config,ext_model,extract_loader,50, f"{args.save_dir}/models/{args.dataset}/model_extract/log.txt")
         test_acc = test(ext_model, test_loader)
         with open(f"{args.save_dir}/models/{args.dataset}/model_extract/log.txt","a+") as f:
             f.write("Test: {}\n".format(test_acc))
         torch.save(ext_model.state_dict(), f"{args.save_dir}/models/{args.dataset}/model_extract/final.pt")
     if args.finetune:
-        fint_model = config.model()
+        fint_model = mlconfig.instantiate(config.model)
         fint_model.load_state_dict(torch.load(f"{args.save_dir}/models/{args.dataset}/model_teacher/final.pt"))
         extract_loader = extract_dataset(fint_model, train_loader,100)
         train_sur(config,fint_model,extract_loader,5,f"{args.save_dir}/models/{args.dataset}/model_fine-tune/log.txt" )
@@ -301,19 +301,19 @@ def feature_extractor(args, config):
         student.eval()
         test_acc = test(student, test_loader)
     if args.adv_gen:
-        victim_model = config.model()
+        victim_model = mlconfig.instantiate(config.model)
         victim_model.load_state_dict(torch.load(f"{args.save_dir}/models/{args.dataset}"+"/model_teacher/final.pt"))
         test(victim_model,test_loader)
         ref_models = load_model(config, 1)
 
-        attack = Transfer_Untargeted(victim_model, ref_models, config)
+        attack = Transfer2(victim_model, ref_models, config)
         water_adv = []
         y_adv = []
         acc = 0
         num = 0
 
         for batch_idx, (input, label) in enumerate(tqdm(watermarkloader, unit="images", desc="Training adv exp for (watermark)"), 0):
-            trigger, target = attack(images=input,labels=label)
+            trigger, target = attack(images=input,labels=label, given_labels=label)
             trigger, target = trigger.cuda(), target.cuda().long()
             pred =victim_model(trigger).argmax(axis=1)
             # print(target, pred)
