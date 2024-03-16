@@ -180,8 +180,8 @@ def load_data(config, shuffle=False, adv=None, seed=0):
         transform_list_test = transforms.Compose([transforms.ToTensor(),
                             transforms.Normalize(mean, std)])
         
-        trainset = mlconfig.instantiate(config.dataset, train=True, transform=transform_list_train)
-        testset = mlconfig.instantiate(config.dataset, train=False, transform=transform_list_test)
+        trainset = mlconfig.instantiate(config.dataset, train=True, transform=transform_list_train, download=True)
+        testset = mlconfig.instantiate(config.dataset, train=False, transform=transform_list_test, download=True)
         # import scipy.io as sio
         # w_dataset = sio.loadmat(os.path.join(config.dataset.root, "train_32x32"))
         # x_w, y_w = np.moveaxis(w_dataset['X'], -1, 0), np.squeeze(w_dataset['y'] - 1)
