@@ -1,0 +1,15 @@
+For CIAFR10
+python attack.py --c configs/cifar10/train/resnet.yaml
+python attack.py --c configs/cifar10/train/resnet.yaml --adv False
+python attack.py --c configs/cifar10/train/resnet_same_struct.yaml
+python attack.py --c configs/cifar10/train/resnet.yaml --adv_target True
+python attack.py --c configs/cifar10/train/resnet.yaml --adv False --adv_target True
+python attack.py --c configs/cifar10/train/resnet_same_struct.yaml --adv_target True
+
+For ImageNet
+python attack.py --c configs/imagenet/train/resnet.yaml
+python attack.py --c configs/imagenet/train/resnet.yaml --adv False
+python attack.py --c configs/imagenet/train/resnet_same_struct.yaml
+python attack.py --c configs/imagenet/train/resnet.yaml --adv_target True
+python attack.py --c configs/imagenet/train/resnet.yaml --adv False --adv_target True
+python attack.py --c configs/imagenet/train/resnet_same_struct.yaml --adv_target True
