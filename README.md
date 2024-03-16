@@ -17,6 +17,7 @@ The models for CIFAR10 and ImageNet can be downloaded from [this link](https://d
 
 
 ### Claim Generation and Verification
+If the files are downloaded, you can run the commands in `commands.txt` to generate the false claims.
 #### To train your own models which are to generate the adversarial examples
 
 ```
