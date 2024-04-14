@@ -6,6 +6,8 @@ Pytorch implement of the paper False Claims against Model Ownership Resolution w
 ## Dependencies
 For [Adi](https://arxiv.org/abs/1802.04633) and [EWE](https://arxiv.org/abs/2002.12200), we use the [Watermark-Robustness-ToolBox](https://github.com/dnn-security/Watermark-Robustness-Toolbox) to reproduce their results; for [Li (b)](https://github.com/zhenglisec/Blind-Watermark-for-DNN), [DAWN](https://github.com/ssg-research/dawn-dynamic-adversarial-watermarking-of-neural-networks) , and [DI](https://github.com/cleverhans-lab/dataset-inference), we use their open-sourced implementations; as the source code of [Lukas](https://github.com/ayberkuckun/DNN-Fingerprinting) is based on TensorFlow (whereas all others are on Pytorch). We re-implemented their schemes in Pytorch.
 
+We evaluate our methods on Ubuntu 20.04.2 LT with one NVIDIA-V100 GPU. One GPU is required for this implementation.
+
 To install dependencies
 ```
 pip install -r requirements.txt
