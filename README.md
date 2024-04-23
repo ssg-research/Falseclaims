@@ -19,7 +19,7 @@ The models for CIFAR10 and ImageNet can be downloaded from [this link](https://d
 
 
 ### Claim Generation and Verification
-If the files are downloaded, you can run the commands in `commands.txt` to generate the false claims.
+If the files are downloaded, you can run the commands in `commands.txt` to generate the false claims. The results are listed in Table~4 in our paper, which is an average of the MORacc reported for the five models we use in experiments. For columns Adi, Li(b), and Lukas, the MORaccs reported are the untargeted results, for columns EWE and DAWN, the MORaccs reported are the targeted results. For the column DI, run the jupyter notebook in `defence/`.
 #### To train your own models which are to generate the adversarial examples
 
 ```
