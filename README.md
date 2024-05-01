@@ -16,6 +16,20 @@ pip install -r requirements.txt
 And we use the [mlconfig](https://github.com/narumiruna/mlconfig) to pass configuration parameters to each script. The configuration files used in our paper can be found in `configs/`.
 
 The models for CIFAR10 and ImageNet can be downloaded from [this link](https://drive.google.com/drive/folders/1h1NcupuTF76XOdOY-CZWR_XMe4GJdmWx?usp=sharing). Save the corresponding models in `checkpoint/` like `checkpoint/cifar10`. The ten classes dataset of ImageNet we use are reported in our [research report](https://arxiv.org/pdf/2304.06607.pdf). It can also be downloaded from the link above. Save the `small_imagenet` file to `~/data/`.
+The downloaded files structure should be the follwoings:
+- `Falseclaims/`
+  - `checkpoint/`
+    - `cifar10/`
+      - `cifar_wide_resnet/`
+      - `ind/`
+      - `victim/`
+    - `imagenet/`
+      - `ind/`
+      - `resnet18_imagenet/`
+      - `victim/`
+  - `defences/`
+    - `cifar10/`
+    - `imagenet/`
 
 
 ### Claim Generation and Verification
@@ -92,3 +106,7 @@ Note that for Lukas, we first train surrogate models.
 ```
 python train_surrogate.py -c configs/cifar10/train/resnet_lukas.yaml
 ```
+
+
+### The false claims results
+Durining the experiments, there will be some logs saving in the directory. For model training logs, they will be saved in `/log'. And the images of adversarial examples we generated will be saved in `/exp_log`, it shows the influence of eps on images visually.
