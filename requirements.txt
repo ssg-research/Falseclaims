@@ -10,3 +10,4 @@ scikit-learn
 Pillow
 gputil
 mlconfig==0.2.0
+seaborn
